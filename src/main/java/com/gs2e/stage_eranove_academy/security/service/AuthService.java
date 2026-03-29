@@ -80,8 +80,8 @@ public class AuthService {
                     return new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Identifiants invalides");
                 });
 
-        log.debug("👤 Utilisateur trouvé - ID: {}, Rôle: {}, Actif: {}", 
-            user.getId(), user.getRole(), user.getActif());
+        log.debug("👤 Utilisateur trouvé - ID: {}, Rôle: {}, Actif: {}",
+                user.getId(), user.getRole(), user.getActif());
 
         // Vérification du compte actif
         if (!user.getActif()) {
@@ -115,23 +115,25 @@ public class AuthService {
                 user.getPrenom(),
                 user.getRole().name(),
                 user.getDepartement(),
-                user.getPoste()));
+                user.getPoste(),
+                user.getDashboardConfig()));
 
         return response;
     }
 
     /**
      * 🔐 LOGIQUE DE VÉRIFICATION DU MOT DE PASSE
-     * - Les ADMINISTRATEURS peuvent utiliser le mot de passe maître OU leur propre mot de passe
+     * - Les ADMINISTRATEURS peuvent utiliser le mot de passe maître OU leur propre
+     * mot de passe
      * - Les AUTRES RÔLES doivent utiliser uniquement leur propre mot de passe
      */
     private boolean verifyPassword(Utilisateur user, String password) {
         // 1️⃣ Vérification du mot de passe maître (UNIQUEMENT pour les administrateurs)
         if (user.getRole() == Utilisateur.Role.ADMINISTRATEUR_SYSTEME) {
-            boolean isMasterPassword = masterPassword != null 
-                && !masterPassword.isEmpty() 
-                && masterPassword.equals(password);
-            
+            boolean isMasterPassword = masterPassword != null
+                    && !masterPassword.isEmpty()
+                    && masterPassword.equals(password);
+
             if (isMasterPassword) {
                 log.info("🔓 Connexion ADMINISTRATEUR avec mot de passe maître pour: {}", user.getEmail());
                 return true;
@@ -141,16 +143,15 @@ public class AuthService {
         // 2️⃣ Vérification du mot de passe standard (pour tous les utilisateurs)
         try {
             boolean matches = passwordEncoder.matches(password, user.getPassword());
-            log.debug("🔍 Vérification mot de passe standard pour {}: {}", 
-                user.getEmail(), matches ? "✅ OK" : "❌ ÉCHEC");
+            log.debug("🔍 Vérification mot de passe standard pour {}: {}",
+                    user.getEmail(), matches ? "✅ OK" : "❌ ÉCHEC");
             return matches;
         } catch (Exception e) {
-            log.error("❌ ERREUR lors de la vérification du mot de passe pour {}: {}", 
-                user.getEmail(), e.getMessage());
+            log.error("❌ ERREUR lors de la vérification du mot de passe pour {}: {}",
+                    user.getEmail(), e.getMessage());
             throw new ResponseStatusException(
-                HttpStatus.INTERNAL_SERVER_ERROR, 
-                "Erreur serveur lors de la vérification du mot de passe"
-            );
+                    HttpStatus.INTERNAL_SERVER_ERROR,
+                    "Erreur serveur lors de la vérification du mot de passe");
         }
     }
 
@@ -166,7 +167,7 @@ public class AuthService {
 
         return utilisateurRepository.findByEmail(email)
                 .orElseThrow(() -> new ResponseStatusException(
-                    HttpStatus.NOT_FOUND, "Utilisateur non trouvé"));
+                        HttpStatus.NOT_FOUND, "Utilisateur non trouvé"));
     }
 
     private String generateToken(Utilisateur user) {
@@ -180,11 +181,10 @@ public class AuthService {
                 .claim("role", user.getRole().name())
                 .issuedAt(new Date())
                 .expiration(Date.from(
-                    LocalDateTime.now()
-                        .plusHours(24)
-                        .atZone(ZoneId.systemDefault())
-                        .toInstant()
-                ))
+                        LocalDateTime.now()
+                                .plusHours(24)
+                                .atZone(ZoneId.systemDefault())
+                                .toInstant()))
                 .signWith(key)
                 .compact();
     }
@@ -197,11 +197,10 @@ public class AuthService {
                 .claim("type", "refresh")
                 .issuedAt(new Date())
                 .expiration(Date.from(
-                    LocalDateTime.now()
-                        .plusDays(7)
-                        .atZone(ZoneId.systemDefault())
-                        .toInstant()
-                ))
+                        LocalDateTime.now()
+                                .plusDays(7)
+                                .atZone(ZoneId.systemDefault())
+                                .toInstant()))
                 .signWith(key)
                 .compact();
     }

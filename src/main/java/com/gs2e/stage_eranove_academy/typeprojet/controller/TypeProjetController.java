@@ -15,7 +15,7 @@ import org.springframework.web.bind.annotation.*;
 
 @RestController
 @CrossOrigin
-@RequestMapping("/api/types-projet")
+@RequestMapping("/api/v1/types-projet")
 @Tag(name = "TypeProjet", description = "Endpoints pour la création et la consultation des typeProjets")
 @org.springframework.security.access.prepost.PreAuthorize("hasAnyRole('ADMINISTRATEUR_SYSTEME', 'CHEF_DE_PROJET')")
 @Slf4j

@@ -2,6 +2,10 @@ package com.gs2e.stage_eranove_academy.projet.service.impl;
 
 import com.gs2e.stage_eranove_academy.common.Exceptions.EntityNotFoundException;
 import com.gs2e.stage_eranove_academy.common.Exceptions.InvalidOperationException;
+import com.gs2e.stage_eranove_academy.comite.model.Comite;
+import com.gs2e.stage_eranove_academy.comite.repository.ComiteRepository;
+import com.gs2e.stage_eranove_academy.entite.model.Entite;
+import com.gs2e.stage_eranove_academy.entite.repository.EntiteRepository;
 import com.gs2e.stage_eranove_academy.projet.dto.ProjetDto;
 import com.gs2e.stage_eranove_academy.projet.mapper.ProjetMapper;
 import com.gs2e.stage_eranove_academy.projet.model.Projet;
@@ -21,6 +25,8 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.cache.annotation.Cacheable;
+import org.springframework.cache.annotation.CacheEvict;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
@@ -35,6 +41,8 @@ public class ProjetServiceImpl implements ProjetService {
     private final ProjetRepository projetRepository;
     private final TypeProjetRepository typeProjetRepository;
     private final SiteRepository siteRepository;
+    private final ComiteRepository comiteRepository;
+    private final EntiteRepository entiteRepository;
     private final ProjetMapper projetMapper;
     private final ProjetDtoValidator validator;
     private final NotificationService notificationService;
@@ -44,6 +52,8 @@ public class ProjetServiceImpl implements ProjetService {
     public ProjetServiceImpl(ProjetRepository projetRepository,
             TypeProjetRepository typeProjetRepository,
             SiteRepository siteRepository,
+            ComiteRepository comiteRepository,
+            EntiteRepository entiteRepository,
             ProjetMapper projetMapper,
             ProjetDtoValidator validator,
             NotificationService notificationService,
@@ -51,6 +61,8 @@ public class ProjetServiceImpl implements ProjetService {
         this.projetRepository = projetRepository;
         this.typeProjetRepository = typeProjetRepository;
         this.siteRepository = siteRepository;
+        this.comiteRepository = comiteRepository;
+        this.entiteRepository = entiteRepository;
         this.projetMapper = projetMapper;
         this.validator = validator;
         this.notificationService = notificationService;
@@ -73,6 +85,7 @@ public class ProjetServiceImpl implements ProjetService {
     }
 
     @Override
+    @CacheEvict(value = {"projets_stats", "projets_evolution", "projets_type_stats"}, allEntries = true)
     public ProjetDto createProject(ProjetDto projetDto) throws InvalidOperationException {
         log.info("Création d'un nouveau projet: {}", projetDto.getNom());
 
@@ -95,6 +108,20 @@ public class ProjetServiceImpl implements ProjetService {
             TypeProjet typeProjet = typeProjetRepository.findById(projetDto.getTypeProjetId())
                     .orElseThrow(() -> new EntityNotFoundException("Type de projet non trouvé"));
             projet.setTypeProjet(typeProjet);
+        }
+
+        // Gérer le comité
+        if (projetDto.getComiteId() != null) {
+            Comite comite = comiteRepository.findById(projetDto.getComiteId())
+                    .orElseThrow(() -> new EntityNotFoundException("Comité non trouvé"));
+            projet.setComite(comite);
+        }
+
+        // Gérer l'entité
+        if (projetDto.getEntiteId() != null) {
+            Entite entite = entiteRepository.findById(projetDto.getEntiteId())
+                    .orElseThrow(() -> new EntityNotFoundException("Entité non trouvée"));
+            projet.setEntite(entite);
         }
 
         // Vérification anti-doublon: Nom + Site + Date Début
@@ -122,6 +149,7 @@ public class ProjetServiceImpl implements ProjetService {
     }
 
     @Override
+    @CacheEvict(value = {"projets_stats", "projets_evolution", "projets_type_stats"}, allEntries = true)
     public ProjetDto updateProject(Long id, ProjetDto projetDto)
             throws EntityNotFoundException, InvalidOperationException {
         log.info("Mise à jour du projet avec l'ID: {}", id);
@@ -152,6 +180,7 @@ public class ProjetServiceImpl implements ProjetService {
             existingProjet.setDateFinPrevue(projetDto.getDateFinPrevue());
             existingProjet.setDateFinReelle(projetDto.getDateFinReelle());
             existingProjet.setBudget(projetDto.getBudget());
+            existingProjet.setBudgetConsomme(projetDto.getBudgetConsomme() != null ? projetDto.getBudgetConsomme() : BigDecimal.ZERO);
             existingProjet.setProgression(projetDto.getProgression());
             existingProjet.setEquipe(projetDto.getEquipe());
             existingProjet.setTags(projetDto.getTags());
@@ -179,6 +208,24 @@ public class ProjetServiceImpl implements ProjetService {
             } else {
                 existingProjet.setTypeProjet(null);
                 log.debug("Type de projet défini à null");
+            }
+
+            // Gérer le comité
+            if (projetDto.getComiteId() != null) {
+                Comite comite = comiteRepository.findById(projetDto.getComiteId())
+                        .orElseThrow(() -> new EntityNotFoundException("Comité non trouvé"));
+                existingProjet.setComite(comite);
+            } else {
+                existingProjet.setComite(null);
+            }
+
+            // Gérer l'entité
+            if (projetDto.getEntiteId() != null) {
+                Entite entite = entiteRepository.findById(projetDto.getEntiteId())
+                        .orElseThrow(() -> new EntityNotFoundException("Entité non trouvée"));
+                existingProjet.setEntite(entite);
+            } else {
+                existingProjet.setEntite(null);
             }
 
             log.debug("Sauvegarde du projet");
@@ -212,6 +259,7 @@ public class ProjetServiceImpl implements ProjetService {
     }
 
     @Override
+    @CacheEvict(value = {"projets_stats", "projets_evolution", "projets_type_stats"}, allEntries = true)
     public void deleteProject(Long id) throws EntityNotFoundException {
         log.info("Suppression du projet avec l'ID: {}", id);
 
@@ -278,6 +326,7 @@ public class ProjetServiceImpl implements ProjetService {
     }
 
     @Override
+    @Cacheable("projets_stats")
     public Map<String, Object> getProjectStatistics() {
         log.info("Calcul des statistiques des projets");
         Map<String, Object> stats = new HashMap<>();
@@ -313,10 +362,62 @@ public class ProjetServiceImpl implements ProjetService {
                 .reduce(BigDecimal.ZERO, BigDecimal::add);
         stats.put("totalBudget", totalBudget);
 
+        // Comparaison temporelle (Ce mois vs mois dernier)
+        LocalDate now = LocalDate.now();
+        LocalDate startOfThisMonth = now.withDayOfMonth(1);
+        LocalDate startOfLastMonth = now.minusMonths(1).withDayOfMonth(1);
+        LocalDate endOfLastMonth = startOfThisMonth.minusDays(1);
+
+        long thisMonthCount = projetRepository.countByDateDebutBetween(startOfThisMonth, now);
+        long lastMonthCount = projetRepository.countByDateDebutBetween(startOfLastMonth, endOfLastMonth);
+
+        stats.put("thisMonthNewProjects", thisMonthCount);
+        stats.put("lastMonthNewProjects", lastMonthCount);
+
+        // Trend calculation
+        if (lastMonthCount > 0) {
+            double trend = ((double) (thisMonthCount - lastMonthCount) / lastMonthCount) * 100;
+            stats.put("projectsTrend", trend);
+        } else {
+            stats.put("projectsTrend", thisMonthCount > 0 ? 100.0 : 0.0);
+        }
+
         return stats;
     }
 
     @Override
+    @Cacheable("projets_evolution")
+    public List<Map<String, Object>> getProjectEvolution() {
+        log.info("Récupération de l'évolution des projets");
+        List<Map<String, Object>> evolution = new ArrayList<>();
+        List<Object[]> results = projetRepository.getProjectEvolutionStats();
+
+        for (Object[] row : results) {
+            Map<String, Object> data = new HashMap<>();
+            data.put("month", row[0]);
+            data.put("year", row[1]);
+            data.put("count", row[2]);
+            data.put("budget", row[3]);
+            evolution.add(data);
+        }
+        return evolution;
+    }
+
+    @Override
+    @Cacheable("projets_type_stats")
+    public Map<String, Long> getProjectsByTypeStats() {
+        log.info("Récupération des statistiques par type de projet");
+        Map<String, Long> stats = new HashMap<>();
+        projetRepository.countProjectsByType().forEach(result -> {
+            String typeName = (String) result[0];
+            Long count = (Long) result[1];
+            stats.put(typeName, count);
+        });
+        return stats;
+    }
+
+    @Override
+    @CacheEvict(value = {"projets_stats", "projets_evolution", "projets_type_stats"}, allEntries = true)
     public ProjetDto updateProjectStatus(Long id, Projet.StatutProjet newStatus) throws EntityNotFoundException {
         log.info("Mise à jour du statut du projet {} vers {}", id, newStatus);
 
@@ -349,6 +450,7 @@ public class ProjetServiceImpl implements ProjetService {
     }
 
     @Override
+    @CacheEvict(value = {"projets_stats", "projets_evolution", "projets_type_stats"}, allEntries = true)
     public ProjetDto updateProjectProgress(Long id, Integer progress) throws EntityNotFoundException {
         log.info("Mise à jour de la progression du projet {} à {}", id, progress);
 

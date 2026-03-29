@@ -1,7 +1,9 @@
 package com.gs2e.stage_eranove_academy.rapport.mapper;
 
+import com.gs2e.stage_eranove_academy.projet.model.Projet;
 import com.gs2e.stage_eranove_academy.rapport.dto.RapportDto;
 import com.gs2e.stage_eranove_academy.rapport.model.Rapport;
+import org.hibernate.Hibernate;
 import org.springframework.stereotype.Component;
 
 @Component
@@ -27,17 +29,59 @@ public class RapportMapper {
         dto.setRecommandations(rapport.getRecommandations());
         dto.setAnalyseAutomatique(rapport.getAnalyseAutomatique());
 
-        // Mapping du projet
-        if (rapport.getProjet() != null) {
-            dto.setProjetId(rapport.getProjet().getId());
-            dto.setProjetNom(rapport.getProjet().getNom());
-        }
+        // Mapping du projet avec vérification Hibernate pour éviter
+        // LazyInitializationException
+        dto.setProjetId(getProjetIdSafe(rapport));
+        dto.setProjetNom(getProjetNomSafe(rapport));
 
         // Champs calculés
         dto.setFichierTailleFormatee(formatFileSize(rapport.getFichierTaille()));
         dto.setDureeEstimeeFormatee(formatDuration(rapport.getDureeEstimeeMois()));
 
         return dto;
+    }
+
+    /**
+     * Récupère l'ID du projet de manière sécurisée pour éviter
+     * LazyInitializationException
+     */
+    private Long getProjetIdSafe(Rapport rapport) {
+        try {
+            Projet projet = rapport.getProjet();
+            if (projet != null) {
+                if (!Hibernate.isInitialized(projet)) {
+                    // Si le projet n'est pas initialisé, on ne peut pas accéder à ses propriétés
+                    // sauf l'ID qui est dans la clé étrangère
+                    return projet.getId();
+                }
+                return projet.getId();
+            }
+        } catch (Exception e) {
+            // En cas d'erreur, retourner null
+            return null;
+        }
+        return null;
+    }
+
+    /**
+     * Récupère le nom du projet de manière sécurisée pour éviter
+     * LazyInitializationException
+     */
+    private String getProjetNomSafe(Rapport rapport) {
+        try {
+            Projet projet = rapport.getProjet();
+            if (projet != null) {
+                if (!Hibernate.isInitialized(projet)) {
+                    // Si le projet n'est pas initialisé, on ne peut pas accéder au nom
+                    return null;
+                }
+                return projet.getNom();
+            }
+        } catch (Exception e) {
+            // En cas d'erreur, retourner null
+            return null;
+        }
+        return null;
     }
 
     public Rapport toEntity(RapportDto dto) {

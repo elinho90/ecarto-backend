@@ -15,12 +15,18 @@ public interface ProjetMapper {
     @Mapping(target = "typeProjetNom", expression = "java(getTypeProjetLibelleSafe(projet))")
     @Mapping(target = "siteId", expression = "java(getSiteIdSafe(projet))")
     @Mapping(target = "siteNom", expression = "java(getSiteLibelleSafe(projet))")
+    @Mapping(target = "comiteId", expression = "java(getComiteIdSafe(projet))")
+    @Mapping(target = "comiteNom", expression = "java(getComiteLibelleSafe(projet))")
+    @Mapping(target = "entiteId", expression = "java(getEntiteIdSafe(projet))")
+    @Mapping(target = "entiteNom", expression = "java(getEntiteLibelleSafe(projet))")
     @Mapping(target = "dureeJours", expression = "java(calculateDuration(projet))")
     @Mapping(target = "coutParJour", expression = "java(calculateCostPerDay(projet))")
     ProjetDto toDto(Projet projet);
 
     @Mapping(target = "typeProjet", expression = "java(mapTypeProjet(projetDto.getTypeProjetId()))")
     @Mapping(target = "site", expression = "java(mapSite(projetDto.getSiteId()))")
+    @Mapping(target = "comite", expression = "java(mapComite(projetDto.getComiteId()))")
+    @Mapping(target = "entite", expression = "java(mapEntite(projetDto.getEntiteId()))")
     Projet toEntity(ProjetDto projetDto);
 
     @BeanMapping(nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
@@ -42,6 +48,24 @@ public interface ProjetMapper {
         com.gs2e.stage_eranove_academy.site.model.Site site = new com.gs2e.stage_eranove_academy.site.model.Site();
         site.setId(siteId);
         return site;
+    }
+
+    default com.gs2e.stage_eranove_academy.comite.model.Comite mapComite(Long comiteId) {
+        if (comiteId == null) {
+            return null;
+        }
+        com.gs2e.stage_eranove_academy.comite.model.Comite comite = new com.gs2e.stage_eranove_academy.comite.model.Comite();
+        comite.setId(comiteId);
+        return comite;
+    }
+
+    default com.gs2e.stage_eranove_academy.entite.model.Entite mapEntite(Long entiteId) {
+        if (entiteId == null) {
+            return null;
+        }
+        com.gs2e.stage_eranove_academy.entite.model.Entite entite = new com.gs2e.stage_eranove_academy.entite.model.Entite();
+        entite.setId(entiteId);
+        return entite;
     }
 
     default Long calculateDuration(Projet projet) {
@@ -115,6 +139,66 @@ public interface ProjetMapper {
                     Hibernate.initialize(site);
                 }
                 return site.getId();
+            }
+        } catch (Exception e) {
+            return null;
+        }
+        return null;
+    }
+
+    default String getComiteLibelleSafe(Projet projet) {
+        try {
+            com.gs2e.stage_eranove_academy.comite.model.Comite comite = projet.getComite();
+            if (comite != null) {
+                if (!Hibernate.isInitialized(comite)) {
+                    Hibernate.initialize(comite);
+                }
+                return comite.getNom();
+            }
+        } catch (Exception e) {
+            return null;
+        }
+        return null;
+    }
+
+    default Long getComiteIdSafe(Projet projet) {
+        try {
+            com.gs2e.stage_eranove_academy.comite.model.Comite comite = projet.getComite();
+            if (comite != null) {
+                if (!Hibernate.isInitialized(comite)) {
+                    Hibernate.initialize(comite);
+                }
+                return comite.getId();
+            }
+        } catch (Exception e) {
+            return null;
+        }
+        return null;
+    }
+
+    default String getEntiteLibelleSafe(Projet projet) {
+        try {
+            com.gs2e.stage_eranove_academy.entite.model.Entite entite = projet.getEntite();
+            if (entite != null) {
+                if (!Hibernate.isInitialized(entite)) {
+                    Hibernate.initialize(entite);
+                }
+                return entite.getNom();
+            }
+        } catch (Exception e) {
+            return null;
+        }
+        return null;
+    }
+
+    default Long getEntiteIdSafe(Projet projet) {
+        try {
+            com.gs2e.stage_eranove_academy.entite.model.Entite entite = projet.getEntite();
+            if (entite != null) {
+                if (!Hibernate.isInitialized(entite)) {
+                    Hibernate.initialize(entite);
+                }
+                return entite.getId();
             }
         } catch (Exception e) {
             return null;

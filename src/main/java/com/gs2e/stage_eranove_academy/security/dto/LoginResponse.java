@@ -33,6 +33,7 @@ public class LoginResponse {
         private String role;
         private String departement;
         private String poste;
+        private String dashboardConfig;
     }
 
     /**
@@ -48,8 +49,8 @@ public class LoginResponse {
                     utilisateur.getPrenom(),
                     utilisateur.getRole() != null ? utilisateur.getRole().name() : null,
                     utilisateur.getDepartement(),
-                    utilisateur.getPoste()
-            );
+                    utilisateur.getPoste(),
+                    utilisateur.getDashboardConfig());
         }
     }
 }

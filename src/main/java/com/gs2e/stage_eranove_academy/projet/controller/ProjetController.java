@@ -35,7 +35,7 @@ import java.util.List;
 import java.util.Map;
 
 @RestController
-@RequestMapping("/api/projets")
+@RequestMapping("/api/v1/projets")
 @Tag(name = "Projets", description = "API de gestion des projets")
 @Slf4j
 public class ProjetController {
@@ -295,5 +295,23 @@ public class ProjetController {
         log.info("GET /api/projets/budget-statistics - Récupération des statistiques de budget");
         Map<String, BigDecimal> statistics = projetService.getBudgetStatisticsByStatus();
         return ResponseEntity.ok(statistics);
+    }
+
+    @GetMapping("/evolution")
+    @PreAuthorize("hasAnyRole('ADMINISTRATEUR_SYSTEME', 'CHEF_DE_PROJET', 'DECIDEUR')")
+    @Operation(summary = "Récupérer l'évolution des projets", description = "Récupère les statistiques d'évolution des projets par mois")
+    public ResponseEntity<List<Map<String, Object>>> getProjectEvolution() {
+        log.info("GET /api/projets/evolution - Récupération de l'évolution des projets");
+        List<Map<String, Object>> evolution = projetService.getProjectEvolution();
+        return ResponseEntity.ok(evolution);
+    }
+
+    @GetMapping("/stats-by-type")
+    @PreAuthorize("hasAnyRole('ADMINISTRATEUR_SYSTEME', 'CHEF_DE_PROJET', 'DECIDEUR')")
+    @Operation(summary = "Récupérer les statistiques par type", description = "Récupère le nombre de projets par type")
+    public ResponseEntity<Map<String, Long>> getProjectsByTypeStats() {
+        log.info("GET /api/projets/stats-by-type - Récupération des stats par type");
+        Map<String, Long> stats = projetService.getProjectsByTypeStats();
+        return ResponseEntity.ok(stats);
     }
 }

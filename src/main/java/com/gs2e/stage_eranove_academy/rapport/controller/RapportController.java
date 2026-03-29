@@ -33,7 +33,7 @@ import java.util.List;
 import java.util.Map;
 
 @RestController
-@RequestMapping("/api/rapports")
+@RequestMapping("/api/v1/rapports")
 @Tag(name = "Rapports", description = "API de gestion des rapports de faisabilité")
 @Slf4j
 @RequiredArgsConstructor

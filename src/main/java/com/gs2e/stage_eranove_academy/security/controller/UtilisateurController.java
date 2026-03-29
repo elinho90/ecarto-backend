@@ -16,7 +16,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-@RequestMapping("/api/utilisateurs")
+@RequestMapping("/api/v1/utilisateurs")
 @Tag(name = "Utilisateurs", description = "API de gestion des utilisateurs")
 @RequiredArgsConstructor
 @Slf4j

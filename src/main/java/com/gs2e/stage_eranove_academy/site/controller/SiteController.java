@@ -25,7 +25,7 @@ import java.util.List;
 import java.util.Map;
 
 @RestController
-@RequestMapping("/api/sites")
+@RequestMapping("/api/v1/sites")
 @Tag(name = "Sites", description = "API de gestion des sites géographiques")
 @Slf4j
 public class SiteController {

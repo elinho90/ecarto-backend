@@ -23,6 +23,18 @@ public class TypeProjetDto {
     @Size(max = 500, message = "La description ne peut pas dépasser 500 caractères")
     private String description;
 
+    @Size(max = 100, message = "Le libellé ne peut pas dépasser 100 caractères")
+    private String libelle;
+
+    @Size(max = 20, message = "La couleur ne peut pas dépasser 20 caractères")
+    private String couleur;
+
+    @Size(max = 50, message = "L'icône ne peut pas dépasser 50 caractères")
+    private String icone;
+
+    @Builder.Default
+    private Boolean estActif = true;
+
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
 }

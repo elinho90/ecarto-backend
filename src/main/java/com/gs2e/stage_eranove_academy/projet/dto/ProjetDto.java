@@ -56,10 +56,19 @@ public class ProjetDto {
     private String typeProjetNom;
     private Long siteId;
     private String siteNom;
+    private Long comiteId;
+    private String comiteNom;
+    private Long entiteId;
+    private String entiteNom;
     private Set<String> equipe;
     private String tags;
+    private BigDecimal budgetConsomme;
 
     // Champs calculés
     private Long dureeJours;
     private BigDecimal coutParJour;
+    private Integer totalPhases;
+    private Integer totalEtapes;
+    private Integer etapesValidees;
+    private Integer etapesEnRetard;
 }

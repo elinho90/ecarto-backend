@@ -1,25 +1,24 @@
 package com.gs2e.stage_eranove_academy.security.repository;
 
 import com.gs2e.stage_eranove_academy.security.model.Permission;
-import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.data.jpa.repository.Query;
-import org.springframework.data.repository.query.Param;
-import org.springframework.stereotype.Repository;
 
 import java.util.List;
 
-@Repository
-public interface PermissionRepository extends JpaRepository<Permission, Long> {
+/**
+ * DÉSACTIVÉ : Ce repository n'est plus un bean Spring JPA.
+ * La table 'permissions' a été supprimée (V13) car elle n'était pas utilisée.
+ * La gestion des droits se fait via l'enum Role dans Utilisateur.java.
+ * Cette interface est conservée pour référence future.
+ *
+ * Pour réactiver : rajouter @Repository et extends JpaRepository<Permission,
+ * Long>
+ * et réactiver le @Entity dans Permission.java.
+ */
+public interface PermissionRepository {
 
-    @Query("SELECT p FROM Permission p WHERE p.role = :role")
-    List<Permission> findByRole(@Param("role") String role);
+    List<Permission> findByRole(String role);
 
-    @Query("SELECT COUNT(p) > 0 FROM Permission p WHERE p.role = :role AND p.resource = :resource AND p.action = :action")
-    boolean existsByRoleAndResourceAndAction(@Param("role") String role,
-                                             @Param("resource") String resource,
-                                             @Param("action") String action);
+    boolean existsByRoleAndResourceAndAction(String role, String resource, String action);
 
-    @Query("SELECT p.action FROM Permission p WHERE p.role = :role AND p.resource = :resource")
-    List<String> findActionsByRoleAndResource(@Param("role") String role,
-                                              @Param("resource") String resource);
+    List<String> findActionsByRoleAndResource(String role, String resource);
 }

@@ -52,4 +52,11 @@ public interface RapportService {
         ByteArrayInputStream generateProjectReport(Long projetId) throws EntityNotFoundException;
 
         void sendProjectReportByEmail(Long projetId, String toEmail) throws EntityNotFoundException, MessagingException;
+
+        // Génération du rapport de faisabilité (distinct de la fiche projet)
+        ByteArrayInputStream generateFeasibilityReport(Long rapportId) throws EntityNotFoundException;
+
+        // Envoi du rapport de faisabilité par email
+        void sendFeasibilityReportByEmail(Long rapportId, String toEmail, String message)
+                        throws EntityNotFoundException, MessagingException;
 }

@@ -25,8 +25,8 @@ public interface ProjetService {
     void deleteProject(Long id) throws EntityNotFoundException;
 
     Page<ProjetDto> searchProjects(String nom, Projet.StatutProjet statut, String responsable,
-                                   Long typeProjetId, LocalDate dateDebutFrom, LocalDate dateDebutTo,
-                                   BigDecimal budgetMin, BigDecimal budgetMax, Pageable pageable);
+            Long typeProjetId, LocalDate dateDebutFrom, LocalDate dateDebutTo,
+            BigDecimal budgetMin, BigDecimal budgetMax, Pageable pageable);
 
     Page<ProjetDto> getProjectsByStatus(Projet.StatutProjet status, Pageable pageable);
 
@@ -47,4 +47,8 @@ public interface ProjetService {
     List<ProjetDto> getProjectsEndingSoon(int days);
 
     Map<String, BigDecimal> getBudgetStatisticsByStatus();
+
+    List<Map<String, Object>> getProjectEvolution();
+
+    Map<String, Long> getProjectsByTypeStats();
 }

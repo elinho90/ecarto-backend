@@ -62,12 +62,15 @@ public class Utilisateur {
     @Column(name = "refresh_token_expiry")
     private LocalDateTime refreshTokenExpiry;
 
+    @Column(name = "dashboard_config", columnDefinition = "TEXT")
+    private String dashboardConfig;
+
     public enum Role {
-        ADMINISTRATEUR_SYSTEME,  // Administrateur système
-        CHEF_DE_PROJET,          // Chef de projet
-        ANALYSTE,                // Analyste / Chargé d'étude
-        DEVELOPPEUR,             // Développeur / Équipe technique
-        DECIDEUR,                // Décideur / Direction
-        OBSERVATEUR              // Utilisateur simple / Observateur
+        ADMINISTRATEUR_SYSTEME, // Administrateur système
+        CHEF_DE_PROJET, // Chef de projet
+        ANALYSTE, // Analyste / Chargé d'étude
+        DEVELOPPEUR, // Développeur / Équipe technique
+        DECIDEUR, // Décideur / Direction
+        OBSERVATEUR // Utilisateur simple / Observateur
     }
 }

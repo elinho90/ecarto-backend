@@ -26,6 +26,10 @@ public class JacksonConfig {
                 .modules(new JavaTimeModule())
                 .build();
 
+        // Configure pour sérialiser les dates au format ISO-8601 (string) au lieu de
+        // tableaux
+        mapper.disable(com.fasterxml.jackson.databind.SerializationFeature.WRITE_DATES_AS_TIMESTAMPS);
+
         SimpleModule module = new SimpleModule();
         module.addDeserializer(LocalDate.class, new FlexibleLocalDateDeserializer());
         mapper.registerModule(module);
