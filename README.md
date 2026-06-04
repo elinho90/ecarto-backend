@@ -1,4 +1,4 @@
-﻿<h1 align="center">🗺️ E-Carto — Backend API</h1>
+<h1 align="center">🗺️ E-Carto — Backend API</h1>
 
 <p align="center">
   <strong>Plateforme de gestion cartographique de projets terrain</strong><br/>
@@ -96,7 +96,8 @@ La documentation Swagger : `http://localhost:8080/swagger-ui.html`
 
 Le frontend Angular associé : [ecarto-frontend](https://github.com/elinho90/ecarto-frontend)
 
-## 👨‍💻 Auteur
+## 👨‍💻 Auteurs & Contributeurs
 
-**Elie Hervé Régis Kayré** — [Portfolio](https://portfolio-kayre.vercel.app) · [LinkedIn](https://www.linkedin.com/in/elie-hervé-régis-kayre-90728b1a4)
+* **Elie Hervé Régis Kayré** — [Portfolio](https://portfolio-kayre.vercel.app) · [LinkedIn](https://www.linkedin.com/in/elie-hervé-régis-kayre-90728b1a4) (Auteur principal)
+* **MAGARA Etchien N'Gouan** (Contributeur)
 
