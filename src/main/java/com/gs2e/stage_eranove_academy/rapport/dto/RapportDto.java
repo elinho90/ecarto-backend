@@ -74,6 +74,9 @@ public class RapportDto {
     // Champ pour la gestion de la concurrence
     private Long version;
 
+    // Champ de versioning métier
+    private Integer documentVersion;
+
     // Champs calculés (lecture seule)
     @JsonProperty(access = JsonProperty.Access.READ_ONLY)
     private String fichierTailleFormatee;

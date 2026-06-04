@@ -47,6 +47,7 @@ public class Risque {
     @Column(columnDefinition = "TEXT", name = "plan_mitigation")
     private String planMitigation;
 
+    @Builder.Default
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
     private StatutRisque statut = StatutRisque.IDENTIFIE;
@@ -56,6 +57,7 @@ public class Risque {
     @JoinColumn(name = "responsable_id")
     private Utilisateur responsable;
 
+    @Builder.Default
     @Column(name = "date_identification", nullable = false)
     private LocalDate dateIdentification = LocalDate.now();
 

@@ -176,6 +176,19 @@ public class ProjetController {
         return ResponseEntity.ok(projects);
     }
 
+    @GetMapping("/full-text-search")
+    @PreAuthorize("hasAnyRole('ADMINISTRATEUR_SYSTEME', 'CHEF_DE_PROJET', 'ANALYSTE', 'DEVELOPPEUR', 'DECIDEUR', 'OBSERVATEUR')")
+    @Operation(summary = "Recherche plein-texte", description = "Recherche intelligente (full-text PostgreSQL) sur tous les champs textuels du projet")
+    @ApiResponse(responseCode = "200", description = "Succès")
+    public ResponseEntity<Page<ProjetDto>> fullTextSearch(
+            @Parameter(description = "Mot clé de recherche") @RequestParam String keyword,
+            @PageableDefault(size = 10) Pageable pageable) {
+
+        log.info("GET /api/v1/projets/full-text-search - keyword: '{}'", keyword);
+        Page<ProjetDto> projects = projetService.fullTextSearch(keyword, pageable);
+        return ResponseEntity.ok(projects);
+    }
+
     @GetMapping("/status/{status}")
     @PreAuthorize("hasAnyRole('ADMINISTRATEUR_SYSTEME', 'CHEF_DE_PROJET', 'ANALYSTE', 'DEVELOPPEUR', 'DECIDEUR', 'OBSERVATEUR')")
     @Operation(summary = "Récupérer des projets par statut", description = "Récupère tous les projets avec un statut spécifique")

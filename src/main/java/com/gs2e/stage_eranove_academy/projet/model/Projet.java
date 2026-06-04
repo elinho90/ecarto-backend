@@ -4,6 +4,7 @@ import com.gs2e.stage_eranove_academy.common.model.AuditModel;
 import com.gs2e.stage_eranove_academy.comite.model.Comite;
 import com.gs2e.stage_eranove_academy.entite.model.Entite;
 import com.gs2e.stage_eranove_academy.phase.model.Phase;
+import com.gs2e.stage_eranove_academy.rapport.model.Rapport;
 import com.gs2e.stage_eranove_academy.site.model.Site;
 import com.gs2e.stage_eranove_academy.typeprojet.model.TypeProjet;
 import jakarta.persistence.*;
@@ -14,7 +15,6 @@ import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 
 import org.hibernate.envers.Audited;
-import org.hibernate.envers.NotAudited;
 import org.hibernate.envers.RelationTargetAuditMode;
 
 import java.math.BigDecimal;
@@ -67,9 +67,11 @@ public class Projet extends AuditModel {
     @Column(precision = 12, scale = 2)
     private BigDecimal budget;
 
+    @Builder.Default
     @Column(name = "budget_consomme", precision = 12, scale = 2)
     private BigDecimal budgetConsomme = BigDecimal.ZERO;
 
+    @Builder.Default
     @Column(nullable = false)
     private Integer progression = 0;
 
@@ -90,13 +92,20 @@ public class Projet extends AuditModel {
 
     @Audited(targetAuditMode = RelationTargetAuditMode.NOT_AUDITED)
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "entite_id")
+    @JoinColumn(name = "entite_id", nullable = false)
     private Entite entite;
 
+    @Audited(targetAuditMode = RelationTargetAuditMode.NOT_AUDITED)
+    @OneToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "rapport_principal_id")
+    private Rapport rapportPrincipal;
+
+    @Builder.Default
     @OneToMany(mappedBy = "projet", cascade = CascadeType.ALL, orphanRemoval = true)
     @OrderBy("ordre ASC")
     private List<Phase> phases = new ArrayList<>();
 
+    @Builder.Default
     @ElementCollection
     @CollectionTable(name = "projet_equipe", joinColumns = @JoinColumn(name = "projet_id"))
     @Column(name = "membre")

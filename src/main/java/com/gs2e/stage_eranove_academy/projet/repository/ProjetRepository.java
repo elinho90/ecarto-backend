@@ -56,6 +56,12 @@ public interface ProjetRepository extends JpaRepository<Projet, Long> {
        @Query("SELECT p FROM Projet p WHERE LOWER(p.tags) LIKE LOWER(CONCAT('%', :tag, '%'))")
        Page<Projet> findByTagContaining(@Param("tag") String tag, Pageable pageable);
 
+       // Recherche plein-texte native (PostgreSQL) optimisée via colonne TSVECTOR pré-calculée (V15)
+       @Query(value = "SELECT * FROM projets p WHERE p.document_vectors @@ plainto_tsquery('french', unaccent(:keyword))",
+              countQuery = "SELECT COUNT(*) FROM projets p WHERE p.document_vectors @@ plainto_tsquery('french', unaccent(:keyword))",
+              nativeQuery = true)
+       Page<Projet> searchFullTextNative(@Param("keyword") String keyword, Pageable pageable);
+
        // Statistiques
        @Query("SELECT COUNT(p) FROM Projet p WHERE p.statut = :statut")
        long countByStatut(@Param("statut") Projet.StatutProjet statut);

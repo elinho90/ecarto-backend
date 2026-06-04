@@ -51,4 +51,6 @@ public interface ProjetService {
     List<Map<String, Object>> getProjectEvolution();
 
     Map<String, Long> getProjectsByTypeStats();
+
+    Page<ProjetDto> fullTextSearch(String keyword, Pageable pageable);
 }

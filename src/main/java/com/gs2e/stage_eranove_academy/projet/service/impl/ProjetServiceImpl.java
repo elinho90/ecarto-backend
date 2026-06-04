@@ -12,6 +12,8 @@ import com.gs2e.stage_eranove_academy.projet.model.Projet;
 import com.gs2e.stage_eranove_academy.projet.repository.ProjetRepository;
 import com.gs2e.stage_eranove_academy.projet.service.ProjetService;
 import com.gs2e.stage_eranove_academy.projet.validator.ProjetDtoValidator;
+import com.gs2e.stage_eranove_academy.rapport.model.Rapport;
+import com.gs2e.stage_eranove_academy.rapport.repository.RapportRepository;
 import com.gs2e.stage_eranove_academy.site.model.Site;
 import com.gs2e.stage_eranove_academy.site.repository.SiteRepository;
 import com.gs2e.stage_eranove_academy.typeprojet.model.TypeProjet;
@@ -43,6 +45,7 @@ public class ProjetServiceImpl implements ProjetService {
     private final SiteRepository siteRepository;
     private final ComiteRepository comiteRepository;
     private final EntiteRepository entiteRepository;
+    private final RapportRepository rapportRepository;
     private final ProjetMapper projetMapper;
     private final ProjetDtoValidator validator;
     private final NotificationService notificationService;
@@ -54,6 +57,7 @@ public class ProjetServiceImpl implements ProjetService {
             SiteRepository siteRepository,
             ComiteRepository comiteRepository,
             EntiteRepository entiteRepository,
+            RapportRepository rapportRepository,
             ProjetMapper projetMapper,
             ProjetDtoValidator validator,
             NotificationService notificationService,
@@ -63,6 +67,7 @@ public class ProjetServiceImpl implements ProjetService {
         this.siteRepository = siteRepository;
         this.comiteRepository = comiteRepository;
         this.entiteRepository = entiteRepository;
+        this.rapportRepository = rapportRepository;
         this.projetMapper = projetMapper;
         this.validator = validator;
         this.notificationService = notificationService;
@@ -122,6 +127,13 @@ public class ProjetServiceImpl implements ProjetService {
             Entite entite = entiteRepository.findById(projetDto.getEntiteId())
                     .orElseThrow(() -> new EntityNotFoundException("Entité non trouvée"));
             projet.setEntite(entite);
+        }
+
+        // Gérer le rapport
+        if (projetDto.getRapportPrincipalId() != null) {
+            Rapport rapport = rapportRepository.findById(projetDto.getRapportPrincipalId())
+                    .orElseThrow(() -> new EntityNotFoundException("Rapport non trouvé avec l'ID: " + projetDto.getRapportPrincipalId()));
+            projet.setRapportPrincipal(rapport);
         }
 
         // Vérification anti-doublon: Nom + Site + Date Début
@@ -226,6 +238,15 @@ public class ProjetServiceImpl implements ProjetService {
                 existingProjet.setEntite(entite);
             } else {
                 existingProjet.setEntite(null);
+            }
+
+            // Gérer le rapport
+            if (projetDto.getRapportPrincipalId() != null) {
+                Rapport rapport = rapportRepository.findById(projetDto.getRapportPrincipalId())
+                        .orElseThrow(() -> new EntityNotFoundException("Rapport non trouvé avec l'ID: " + projetDto.getRapportPrincipalId()));
+                existingProjet.setRapportPrincipal(rapport);
+            } else {
+                existingProjet.setRapportPrincipal(null);
             }
 
             log.debug("Sauvegarde du projet");
@@ -501,5 +522,16 @@ public class ProjetServiceImpl implements ProjetService {
         });
 
         return budgetByStatus;
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public Page<ProjetDto> fullTextSearch(String keyword, Pageable pageable) {
+        log.info("Recherche plein texte PostgreSQL pour: '{}'", keyword);
+        if (keyword == null || keyword.isBlank()) {
+            return projetRepository.findAll(pageable).map(projetMapper::toDto);
+        }
+        return projetRepository.searchFullTextNative(keyword.trim(), pageable)
+                .map(projetMapper::toDto);
     }
 }

@@ -19,6 +19,8 @@ public interface ProjetMapper {
     @Mapping(target = "comiteNom", expression = "java(getComiteLibelleSafe(projet))")
     @Mapping(target = "entiteId", expression = "java(getEntiteIdSafe(projet))")
     @Mapping(target = "entiteNom", expression = "java(getEntiteLibelleSafe(projet))")
+    @Mapping(target = "rapportPrincipalId", expression = "java(getRapportPrincipalIdSafe(projet))")
+    @Mapping(target = "rapportPrincipalNom", expression = "java(getRapportPrincipalNomSafe(projet))")
     @Mapping(target = "dureeJours", expression = "java(calculateDuration(projet))")
     @Mapping(target = "coutParJour", expression = "java(calculateCostPerDay(projet))")
     ProjetDto toDto(Projet projet);
@@ -27,6 +29,7 @@ public interface ProjetMapper {
     @Mapping(target = "site", expression = "java(mapSite(projetDto.getSiteId()))")
     @Mapping(target = "comite", expression = "java(mapComite(projetDto.getComiteId()))")
     @Mapping(target = "entite", expression = "java(mapEntite(projetDto.getEntiteId()))")
+    @Mapping(target = "rapportPrincipal", expression = "java(mapRapportPrincipal(projetDto.getRapportPrincipalId()))")
     Projet toEntity(ProjetDto projetDto);
 
     @BeanMapping(nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
@@ -66,6 +69,15 @@ public interface ProjetMapper {
         com.gs2e.stage_eranove_academy.entite.model.Entite entite = new com.gs2e.stage_eranove_academy.entite.model.Entite();
         entite.setId(entiteId);
         return entite;
+    }
+
+    default com.gs2e.stage_eranove_academy.rapport.model.Rapport mapRapportPrincipal(Long rapportId) {
+        if (rapportId == null) {
+            return null;
+        }
+        com.gs2e.stage_eranove_academy.rapport.model.Rapport rapport = new com.gs2e.stage_eranove_academy.rapport.model.Rapport();
+        rapport.setId(rapportId);
+        return rapport;
     }
 
     default Long calculateDuration(Projet projet) {
@@ -199,6 +211,36 @@ public interface ProjetMapper {
                     Hibernate.initialize(entite);
                 }
                 return entite.getId();
+            }
+        } catch (Exception e) {
+            return null;
+        }
+        return null;
+    }
+
+    default String getRapportPrincipalNomSafe(Projet projet) {
+        try {
+            com.gs2e.stage_eranove_academy.rapport.model.Rapport rapport = projet.getRapportPrincipal();
+            if (rapport != null) {
+                if (!Hibernate.isInitialized(rapport)) {
+                    Hibernate.initialize(rapport);
+                }
+                return rapport.getNom();
+            }
+        } catch (Exception e) {
+            return null;
+        }
+        return null;
+    }
+
+    default Long getRapportPrincipalIdSafe(Projet projet) {
+        try {
+            com.gs2e.stage_eranove_academy.rapport.model.Rapport rapport = projet.getRapportPrincipal();
+            if (rapport != null) {
+                if (!Hibernate.isInitialized(rapport)) {
+                    Hibernate.initialize(rapport);
+                }
+                return rapport.getId();
             }
         } catch (Exception e) {
             return null;

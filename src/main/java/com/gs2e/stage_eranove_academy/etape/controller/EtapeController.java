@@ -1,4 +1,4 @@
-﻿package com.gs2e.stage_eranove_academy.etape.controller;
+package com.gs2e.stage_eranove_academy.etape.controller;
 
 import com.gs2e.stage_eranove_academy.etape.dto.EtapeDto;
 import com.gs2e.stage_eranove_academy.etape.service.EtapeService;
@@ -47,7 +47,7 @@ public class EtapeController {
     }
 
     @PostMapping
-    @PreAuthorize("hasAnyRole('ADMINISTRATEUR_SYSTEME', 'CHEF_DE_PROJET', 'ADMINISTRATEUR_SYSTEME')")
+    @PreAuthorize("hasAnyRole('ADMINISTRATEUR_SYSTEME', 'CHEF_DE_PROJET', 'ANALYSTE', 'DEVELOPPEUR')")
     @Operation(summary = "Créer une nouvelle étape")
     public ResponseEntity<EtapeDto> createEtape(@Valid @RequestBody EtapeDto dto) {
         log.info("POST /api/etapes {}", dto);
@@ -56,7 +56,7 @@ public class EtapeController {
     }
 
     @PutMapping("/{id}")
-    @PreAuthorize("hasAnyRole('ADMINISTRATEUR_SYSTEME', 'CHEF_DE_PROJET', 'ADMINISTRATEUR_SYSTEME')")
+    @PreAuthorize("hasAnyRole('ADMINISTRATEUR_SYSTEME', 'CHEF_DE_PROJET', 'ANALYSTE', 'DEVELOPPEUR')")
     @Operation(summary = "Mettre à jour une étape")
     public ResponseEntity<EtapeDto> updateEtape(@PathVariable Long id, @Valid @RequestBody EtapeDto dto) {
         log.info("PUT /api/etapes/{}", id);
@@ -65,7 +65,7 @@ public class EtapeController {
     }
 
     @DeleteMapping("/{id}")
-    @PreAuthorize("hasAnyRole('ADMINISTRATEUR_SYSTEME', 'CHEF_DE_PROJET', 'ADMINISTRATEUR_SYSTEME')")
+    @PreAuthorize("hasAnyRole('ADMINISTRATEUR_SYSTEME', 'CHEF_DE_PROJET')")
     @Operation(summary = "Supprimer une étape")
     public ResponseEntity<Void> deleteEtape(@PathVariable Long id) {
         log.info("DELETE /api/etapes/{}", id);

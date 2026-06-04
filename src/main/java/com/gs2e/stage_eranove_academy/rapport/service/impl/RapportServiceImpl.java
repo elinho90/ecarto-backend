@@ -78,9 +78,14 @@ public class RapportServiceImpl implements RapportService {
             directory.mkdirs();
         }
 
-        // Générer un nom de fichier unique
+        // Calculer la nouvelle version
+        Long projetId = rapportDto.getProjetId();
+        Integer maxVersion = rapportRepository.findMaxDocumentVersionByNomAndProjetId(rapportDto.getNom(), projetId).orElse(0);
+        Integer currentVersion = maxVersion + 1;
+
+        // Générer un nom de fichier unique avec numéro de version
         String originalFilename = file.getOriginalFilename();
-        String uniqueFilename = System.currentTimeMillis() + "_" + originalFilename;
+        String uniqueFilename = "v" + currentVersion + "_" + System.currentTimeMillis() + "_" + originalFilename;
         java.nio.file.Path filePath = java.nio.file.Paths.get(uploadDir, uniqueFilename);
 
         // Sauvegarder le fichier physiquement
@@ -92,6 +97,7 @@ public class RapportServiceImpl implements RapportService {
         rapport.setFichierTaille(file.getSize());
         rapport.setFichierChemin(filePath.toString());
         rapport.setUploadePar(uploadePar);
+        rapport.setDocumentVersion(currentVersion);
 
         Rapport saved = rapportRepository.save(rapport);
         return rapportMapper.toDto(saved);

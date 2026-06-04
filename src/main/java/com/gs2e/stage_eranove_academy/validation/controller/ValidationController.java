@@ -1,4 +1,4 @@
-﻿package com.gs2e.stage_eranove_academy.validation.controller;
+package com.gs2e.stage_eranove_academy.validation.controller;
 
 import com.gs2e.stage_eranove_academy.validation.dto.ValidationEtapeDto;
 import com.gs2e.stage_eranove_academy.validation.service.ValidationService;

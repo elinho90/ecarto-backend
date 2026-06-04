@@ -83,6 +83,9 @@ public interface RapportRepository extends JpaRepository<Rapport, Long> {
 
         boolean existsByFichierNom(String fichierNom);
 
+        @Query("SELECT MAX(r.documentVersion) FROM Rapport r WHERE r.nom = :nom AND (r.projet.id = :projetId OR (r.projet IS NULL AND :projetId IS NULL))")
+        java.util.Optional<Integer> findMaxDocumentVersionByNomAndProjetId(@Param("nom") String nom, @Param("projetId") Long projetId);
+
         @Query("SELECT SUM(r.budgetEstime) FROM Rapport r WHERE r.risque = :risque AND r.budgetEstime IS NOT NULL")
         BigDecimal sumBudgetByRiskLevel(@Param("risque") Rapport.NiveauRisque risque);
 

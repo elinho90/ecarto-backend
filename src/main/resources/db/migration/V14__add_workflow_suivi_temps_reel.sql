@@ -39,8 +39,9 @@ INSERT INTO comites (code, nom, description) VALUES
     ('SAPHIR', 'Comité SAPHIR', 'Évolution de la solution de gestion clientèle');
 
 -- 3. Enrichir la table projets avec les nouvelles colonnes
--- Supprimer l'ancienne contrainte de check sur statut
+-- Supprimer les anciennes contraintes de check sur statut (noms V1 et V12)
 ALTER TABLE projets DROP CONSTRAINT IF EXISTS projets_statut_check;
+ALTER TABLE projets DROP CONSTRAINT IF EXISTS chk_projets_statut;
 
 -- ⚠️ PostgreSQL interdit de modifier une colonne utilisée dans une vue.
 -- On supprime la vue AVANT l'ALTER COLUMN, et on la recrée à la fin.

@@ -58,8 +58,13 @@ public class ProjetDto {
     private String siteNom;
     private Long comiteId;
     private String comiteNom;
+    
+    @NotNull(message = "L'entité est obligatoire pour le suivi du projet")
     private Long entiteId;
     private String entiteNom;
+    
+    private Long rapportPrincipalId;
+    private String rapportPrincipalNom;
     private Set<String> equipe;
     private String tags;
     private BigDecimal budgetConsomme;

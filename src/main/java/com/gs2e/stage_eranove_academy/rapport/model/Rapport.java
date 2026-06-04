@@ -76,6 +76,10 @@ public class Rapport extends AuditModel {
     @Version
     private Long version;
 
+    @Column(nullable = false)
+    @Builder.Default
+    private Integer documentVersion = 1;
+
     public enum NiveauRisque {
         FAIBLE("Faible"),
         MOYEN("Moyen"),

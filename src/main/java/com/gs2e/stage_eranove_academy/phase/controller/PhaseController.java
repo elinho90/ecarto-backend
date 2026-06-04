@@ -1,4 +1,4 @@
-﻿package com.gs2e.stage_eranove_academy.phase.controller;
+package com.gs2e.stage_eranove_academy.phase.controller;
 
 import com.gs2e.stage_eranove_academy.phase.dto.PhaseDto;
 import com.gs2e.stage_eranove_academy.phase.service.PhaseService;
@@ -39,7 +39,7 @@ public class PhaseController {
     }
 
     @PostMapping
-    @PreAuthorize("hasAnyRole('ADMINISTRATEUR_SYSTEME', 'CHEF_DE_PROJET', 'ADMINISTRATEUR_SYSTEME')")
+    @PreAuthorize("hasAnyRole('ADMINISTRATEUR_SYSTEME', 'CHEF_DE_PROJET', 'ANALYSTE')")
     @Operation(summary = "Créer une nouvelle phase")
     public ResponseEntity<PhaseDto> createPhase(@Valid @RequestBody PhaseDto dto) {
         log.info("POST /api/phases {}", dto);
@@ -48,7 +48,7 @@ public class PhaseController {
     }
 
     @PutMapping("/{id}")
-    @PreAuthorize("hasAnyRole('ADMINISTRATEUR_SYSTEME', 'CHEF_DE_PROJET', 'ADMINISTRATEUR_SYSTEME')")
+    @PreAuthorize("hasAnyRole('ADMINISTRATEUR_SYSTEME', 'CHEF_DE_PROJET', 'ANALYSTE')")
     @Operation(summary = "Mettre à jour une phase")
     public ResponseEntity<PhaseDto> updatePhase(@PathVariable Long id, @Valid @RequestBody PhaseDto dto) {
         log.info("PUT /api/phases/{}", id);
@@ -57,7 +57,7 @@ public class PhaseController {
     }
 
     @DeleteMapping("/{id}")
-    @PreAuthorize("hasAnyRole('ADMINISTRATEUR_SYSTEME', 'CHEF_DE_PROJET', 'ADMINISTRATEUR_SYSTEME')")
+    @PreAuthorize("hasAnyRole('ADMINISTRATEUR_SYSTEME', 'CHEF_DE_PROJET')")
     @Operation(summary = "Supprimer une phase")
     public ResponseEntity<Void> deletePhase(@PathVariable Long id) {
         log.info("DELETE /api/phases/{}", id);

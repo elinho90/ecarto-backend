@@ -105,9 +105,10 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
     protected boolean shouldNotFilter(HttpServletRequest request) {
         // ✅ Ne pas appliquer le filtre JWT sur les endpoints publics
         String path = request.getRequestURI();
-        return path.startsWith("/api/auth/login") ||
-                path.startsWith("/api/auth/register") ||
+        return path.startsWith("/api/v1/auth/login") ||
+                path.startsWith("/api/v1/auth/register") ||
                 path.startsWith("/swagger-ui") ||
-                path.startsWith("/v3/api-docs");
+                path.startsWith("/v3/api-docs") ||
+                path.startsWith("/ws-ecarto");
     }
 }

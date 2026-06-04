@@ -28,6 +28,7 @@ public class RapportMapper {
         dto.setDureeEstimeeMois(rapport.getDureeEstimeeMois());
         dto.setRecommandations(rapport.getRecommandations());
         dto.setAnalyseAutomatique(rapport.getAnalyseAutomatique());
+        dto.setDocumentVersion(rapport.getDocumentVersion());
 
         // Mapping du projet avec vérification Hibernate pour éviter
         // LazyInitializationException
@@ -103,6 +104,9 @@ public class RapportMapper {
         rapport.setDureeEstimeeMois(dto.getDureeEstimeeMois());
         rapport.setRecommandations(dto.getRecommandations());
         rapport.setAnalyseAutomatique(dto.getAnalyseAutomatique() != null ? dto.getAnalyseAutomatique() : false);
+        if (dto.getDocumentVersion() != null) {
+            rapport.setDocumentVersion(dto.getDocumentVersion());
+        }
 
         return rapport;
     }

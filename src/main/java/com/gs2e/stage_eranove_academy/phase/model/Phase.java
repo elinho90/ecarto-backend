@@ -36,6 +36,7 @@ public class Phase extends AuditModel {
     @Column(columnDefinition = "TEXT")
     private String description;
 
+    @Builder.Default
     @Column(nullable = false)
     private Integer ordre = 1;
 
@@ -55,16 +56,20 @@ public class Phase extends AuditModel {
     @Column(name = "date_fin_reelle")
     private LocalDate dateFinReelle;
 
+    @Builder.Default
     @Column(nullable = false)
     private Integer progression = 0;
 
+    @Builder.Default
     @Enumerated(EnumType.STRING)
     @Column(nullable = false, length = 30)
     private StatutPhase statut = StatutPhase.A_VENIR;
 
+    @Builder.Default
     @Column(nullable = false)
     private Boolean verrouillee = false;
 
+    @Builder.Default
     @OneToMany(mappedBy = "phase", cascade = CascadeType.ALL, orphanRemoval = true)
     @OrderBy("ordre ASC")
     private List<Etape> etapes = new ArrayList<>();

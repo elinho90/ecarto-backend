@@ -123,6 +123,15 @@ public class EtapeService {
         phaseRepository.save(phase);
     }
 
+    @Transactional
+    public EtapeDto demarrerEtape(Long id) {
+        Etape etape = etapeRepository.findById(id)
+                .orElseThrow(() -> new EntityNotFoundException("Étape non trouvée avec l'ID: " + id));
+        etape.setStatut(StatutEtape.EN_COURS);
+        Etape saved = etapeRepository.save(etape);
+        return toDto(saved);
+    }
+
     public EtapeDto toDto(Etape etape) {
         EtapeDto dto = new EtapeDto();
         dto.setId(etape.getId());

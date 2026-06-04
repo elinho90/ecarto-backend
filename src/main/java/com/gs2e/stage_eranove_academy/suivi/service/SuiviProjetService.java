@@ -540,7 +540,7 @@ public class SuiviProjetService {
         // Créer une alerte de type BILAN
         Alerte alerteBilan = new Alerte();
         alerteBilan.setProjet(phase.getProjet());
-        alerteBilan.setType(TypeAlerte.PROGRESSION_PROJET);
+        alerteBilan.setType(TypeAlerte.PHASE_TERMINEE);
         alerteBilan.setNiveau(depassementJours > 5 ? NiveauAlerte.IMPORTANT : NiveauAlerte.INFORMATION);
         alerteBilan.setMessage(bilanMessage);
         alerteBilan.setLue(false);
@@ -555,19 +555,19 @@ public class SuiviProjetService {
             log.warn("Impossible de diffuser le bilan de phase via WebSocket", e);
         }
 
-        return Map.of(
-                "phaseId", phaseId,
-                "phaseNom", phase.getNom(),
-                "totalEtapes", totalEtapes,
-                "etapesValidees", etapesValidees,
-                "etapesEnRetard", etapesEnRetard,
-                "etapesRejetees", etapesRejetees,
-                "dureeTotaleJours", dureeTotaleJours,
-                "depassementJours", depassementJours,
-                "nbValidations", nbValidations,
-                "dureeMoyenneEtapeJours", Math.round(dureeMoyenneJours * 10) / 10.0,
-                "progression", phase.getProgression(),
-                "bilanMessage", bilanMessage
-        );
+        Map<String, Object> bilan = new java.util.HashMap<>();
+        bilan.put("phaseId", phaseId);
+        bilan.put("phaseNom", phase.getNom());
+        bilan.put("totalEtapes", totalEtapes);
+        bilan.put("etapesValidees", etapesValidees);
+        bilan.put("etapesEnRetard", etapesEnRetard);
+        bilan.put("etapesRejetees", etapesRejetees);
+        bilan.put("dureeTotaleJours", dureeTotaleJours);
+        bilan.put("depassementJours", depassementJours);
+        bilan.put("nbValidations", nbValidations);
+        bilan.put("dureeMoyenneEtapeJours", Math.round(dureeMoyenneJours * 10) / 10.0);
+        bilan.put("progression", phase.getProgression());
+        bilan.put("bilanMessage", bilanMessage);
+        return bilan;
     }
 }

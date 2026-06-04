@@ -1,4 +1,4 @@
-﻿package com.gs2e.stage_eranove_academy.alerte.controller;
+package com.gs2e.stage_eranove_academy.alerte.controller;
 
 import com.gs2e.stage_eranove_academy.alerte.dto.AlerteDto;
 import com.gs2e.stage_eranove_academy.alerte.service.AlerteService;
@@ -25,7 +25,7 @@ public class AlerteController {
     @PreAuthorize("hasAnyRole('ADMINISTRATEUR_SYSTEME', 'CHEF_DE_PROJET', 'ANALYSTE', 'DEVELOPPEUR', 'DECIDEUR', 'OBSERVATEUR')")
     @Operation(summary = "Lister toutes les alertes d'un projet")
     public ResponseEntity<List<AlerteDto>> getAlertesByProjet(@PathVariable Long projetId) {
-        log.info("GET /api/alertes/projet/{}", projetId);
+        log.info("GET /api/v1/alertes/projet/{}", projetId);
         return ResponseEntity.ok(alerteService.getAlertesByProjet(projetId));
     }
 
@@ -33,7 +33,7 @@ public class AlerteController {
     @PreAuthorize("hasAnyRole('ADMINISTRATEUR_SYSTEME', 'CHEF_DE_PROJET', 'ANALYSTE', 'DEVELOPPEUR', 'DECIDEUR', 'OBSERVATEUR')")
     @Operation(summary = "Lister les alertes non résolues d'un projet")
     public ResponseEntity<List<AlerteDto>> getUnresolvedAlertesByProjet(@PathVariable Long projetId) {
-        log.info("GET /api/alertes/projet/{}/non-resolues", projetId);
+        log.info("GET /api/v1/alertes/projet/{}/non-resolues", projetId);
         return ResponseEntity.ok(alerteService.getUnresolvedAlertesByProjet(projetId));
     }
 
@@ -41,7 +41,7 @@ public class AlerteController {
     @PreAuthorize("hasAnyRole('ADMINISTRATEUR_SYSTEME', 'CHEF_DE_PROJET', 'ANALYSTE', 'DEVELOPPEUR', 'DECIDEUR', 'OBSERVATEUR')")
     @Operation(summary = "Lister les alertes non lues pour un utilisateur")
     public ResponseEntity<List<AlerteDto>> getUnreadAlertesByDestinataire(@PathVariable Long userId) {
-        log.info("GET /api/alertes/destinataire/{}/non-lues", userId);
+        log.info("GET /api/v1/alertes/destinataire/{}/non-lues", userId);
         return ResponseEntity.ok(alerteService.getUnreadAlertesByDestinataire(userId));
     }
 
@@ -49,7 +49,7 @@ public class AlerteController {
     @PreAuthorize("hasAnyRole('ADMINISTRATEUR_SYSTEME', 'CHEF_DE_PROJET', 'ANALYSTE', 'DEVELOPPEUR', 'DECIDEUR', 'OBSERVATEUR')")
     @Operation(summary = "Compter les alertes non lues pour un utilisateur")
     public ResponseEntity<Long> countUnreadAlertesByDestinataire(@PathVariable Long userId) {
-        log.info("GET /api/alertes/destinataire/{}/non-lues/count", userId);
+        log.info("GET /api/v1/alertes/destinataire/{}/non-lues/count", userId);
         return ResponseEntity.ok(alerteService.countUnreadAlertesByDestinataire(userId));
     }
 
@@ -57,15 +57,15 @@ public class AlerteController {
     @PreAuthorize("hasAnyRole('ADMINISTRATEUR_SYSTEME', 'CHEF_DE_PROJET', 'ANALYSTE', 'DEVELOPPEUR', 'DECIDEUR', 'OBSERVATEUR')")
     @Operation(summary = "Marquer une alerte comme lue")
     public ResponseEntity<AlerteDto> markAsRead(@PathVariable Long id) {
-        log.info("PUT /api/alertes/{}/lire", id);
+        log.info("PUT /api/v1/alertes/{}/lire", id);
         return ResponseEntity.ok(alerteService.markAsRead(id));
     }
 
     @PutMapping("/{id}/resoudre")
-    @PreAuthorize("hasAnyRole('ADMINISTRATEUR_SYSTEME', 'CHEF_DE_PROJET', 'ADMINISTRATEUR_SYSTEME')")
+    @PreAuthorize("hasAnyRole('ADMINISTRATEUR_SYSTEME', 'CHEF_DE_PROJET')")
     @Operation(summary = "Marquer une alerte comme résolue")
     public ResponseEntity<AlerteDto> markAsResolved(@PathVariable Long id) {
-        log.info("PUT /api/alertes/{}/resoudre", id);
+        log.info("PUT /api/v1/alertes/{}/resoudre", id);
         return ResponseEntity.ok(alerteService.markAsResolved(id));
     }
 
@@ -73,7 +73,7 @@ public class AlerteController {
     @PreAuthorize("hasRole('ADMINISTRATEUR_SYSTEME')")
     @Operation(summary = "Supprimer une alerte")
     public ResponseEntity<Void> deleteAlerte(@PathVariable Long id) {
-        log.info("DELETE /api/alertes/{}", id);
+        log.info("DELETE /api/v1/alertes/{}", id);
         alerteService.deleteAlerte(id);
         return ResponseEntity.noContent().build();
     }

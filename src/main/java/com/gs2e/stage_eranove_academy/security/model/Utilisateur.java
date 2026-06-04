@@ -1,5 +1,6 @@
 package com.gs2e.stage_eranove_academy.security.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -23,6 +24,7 @@ public class Utilisateur {
     @Column(nullable = false, unique = true, length = 254)
     private String email;
 
+    @JsonIgnore
     @Column(nullable = false, length = 254)
     private String password;
 
@@ -56,9 +58,11 @@ public class Utilisateur {
     @Column(name = "updated_at", nullable = false)
     private LocalDateTime updatedAt;
 
+    @JsonIgnore
     @Column(name = "refresh_token", length = 500)
     private String refreshToken;
 
+    @JsonIgnore
     @Column(name = "refresh_token_expiry")
     private LocalDateTime refreshTokenExpiry;
 
